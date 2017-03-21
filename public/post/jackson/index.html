@@ -1,0 +1,570 @@
+<!DOCTYPE HTML>
+
+<html>
+    <head>
+        
+            
+                <title>Streaming JSON with Jackson</title>
+            
+        
+
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="generator" content="Hugo 0.17-DEV" />
+        
+
+
+        
+            <meta name="author" content="Radomir Sohlich">
+        
+        
+            
+                <meta name="description" content="My personal blog, projects and ideas.">
+            
+        
+
+        
+
+  <meta name="twitter:card" content="summary"/>
+
+
+
+<meta name="twitter:title" content="Streaming JSON with Jackson"/>
+<meta name="twitter:description" content="Sometimes there is a situation, when it is more efficient to parse the JSON in stream way. Especially if you are dealing with huge input or slow connection. In that case the JSON need to be read as it comes from input part by part. The side effect of such approach is that you are able to read corrupted JSON arrays in some kind of comfortable way. Well known Jackson library (https://github.com/FasterXML/jackson-core) provides so called stream API to handle it."/>
+<meta name="twitter:site" content="@radeksohlich"/>
+
+
+        <meta property="og:title" content="Streaming JSON with Jackson" />
+<meta property="og:description" content="Sometimes there is a situation, when it is more efficient to parse the JSON in stream way. Especially if you are dealing with huge input or slow connection. In that case the JSON need to be read as it comes from input part by part. The side effect of such approach is that you are able to read corrupted JSON arrays in some kind of comfortable way. Well known Jackson library (https://github.com/FasterXML/jackson-core) provides so called stream API to handle it." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://sohlich.github.io/post/jackson/" />
+
+
+<meta property="og:updated_time" content="2017-02-08T20:27:44&#43;01:00"/>
+
+
+
+
+
+
+
+
+
+
+        
+<meta itemprop="name" content="Streaming JSON with Jackson">
+<meta itemprop="description" content="Sometimes there is a situation, when it is more efficient to parse the JSON in stream way. Especially if you are dealing with huge input or slow connection. In that case the JSON need to be read as it comes from input part by part. The side effect of such approach is that you are able to read corrupted JSON arrays in some kind of comfortable way. Well known Jackson library (https://github.com/FasterXML/jackson-core) provides so called stream API to handle it.">
+
+
+<meta itemprop="dateModified" content="2017-02-08T20:27:44&#43;01:00" />
+<meta itemprop="wordCount" content="274">
+
+
+
+<meta itemprop="keywords" content="golang,java," />
+
+        
+
+        
+
+        
+        
+            
+        
+
+        
+        
+            <link rel="stylesheet" href="https://sohlich.github.io/css/google-font.css" />
+            <link rel="stylesheet" href="https://sohlich.github.io/css/font-awesome.min.css" />
+            <link rel="stylesheet" href="https://sohlich.github.io/css/main.css" />
+            <link rel="stylesheet" href="https://sohlich.github.io/css/add-on.css" />
+            <link rel="stylesheet" href="https://sohlich.github.io/css/monokai-sublime.css">
+        
+
+        
+
+        
+        
+        
+            
+        
+    </head>
+    <body>
+
+        
+        <div id="wrapper">
+
+    
+    
+<header id="header">
+    
+        <h2><a href="https://sohlich.github.io/">Radomír Sohlich</i></a></h2>
+    
+
+    <nav class="links">
+        <ul>
+            
+                <li>
+                    <a href="https://sohlich.github.io/post">
+                        
+                            <i class="fa fa-newspaper-o">&nbsp;</i>Blog
+                    </a>
+                </li>
+            
+        </ul>
+    </nav>
+    <nav class="main">
+        <ul>
+            
+            <li id="share-nav" class="share-menu" style="display:none;">
+                <a class="fa-share-alt" href="#share-menu">Share</a>
+            </li>
+            
+            <li class="search">
+                <a class="fa-search" href="#search">Search</a>
+                <form id="search" method="get" action="//google.com/search">
+                    <input type="text" name="q" placeholder="Search" />
+                    <input type="hidden" name="q" value="site:https://sohlich.github.io/">
+                </form>
+            </li>
+            <li class="menu">
+                <a class="fa-bars" href="#menu">Menu</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+
+<section id="menu">
+
+    
+        <section>
+            <form class="search" method="get" action="//google.com/search">
+                <input type="text" name="q" placeholder="Search" />
+                <input type="hidden" name="q" value="site:https://sohlich.github.io/">
+            </form>
+        </section>
+
+    
+        <section>
+            <ul class="links">
+                
+                    <li>
+                        <a href="https://sohlich.github.io/post">
+                            <h3>
+                                
+                                    <i class="fa fa-newspaper-o">&nbsp;</i>
+                                
+                                Blog
+                            </h3>
+                        </a>
+                    </li>
+                
+            </ul>
+        </section>
+
+    
+        <section>
+            <ul class="links">
+                <header>
+                    <h3>Recent Posts</h3>
+                </header>
+                
+                    
+                
+
+                
+                    <li>
+                        <a href="https://sohlich.github.io/post/jackson/"><p>Streaming JSON with Jackson</p></a>
+                    </li>
+                
+                    <li>
+                        <a href="https://sohlich.github.io/post/natsproxy/"><p>Nats Proxy Framework</p></a>
+                    </li>
+                
+            </ul>
+        </section>
+
+    
+        
+</section>
+
+    <section id="share-menu">
+    <section id="social-share-nav">
+        <ul class="links">
+            <header>
+                <h3>Share this post <i class="fa fa-smile-o"></i></h3>
+            </header>
+            
+
+
+<li><a href="//twitter.com/share?url=https%3a%2f%2fsohlich.github.io%2fpost%2fjackson%2f&text=Streaming%20JSON%20with%20Jackson&via=radeksohlich" target="_blank" class="share-btn twitter">
+    <i class="fa fa-twitter"></i>
+    <p>Twitter</p>
+</a></li>
+
+
+<li><a href="//plus.google.com/share?url=https%3a%2f%2fsohlich.github.io%2fpost%2fjackson%2f" target="_blank" class="share-btn google-plus">
+    <i class="fa fa-google-plus"></i>
+    <p>Google+</p>
+</a></li>
+
+
+<li><a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fsohlich.github.io%2fpost%2fjackson%2f" target="_blank" class="share-btn facebook">
+    <i class="fa fa-facebook"></i>
+    <p>Facebook</p>
+</a></li>
+
+
+<li><a href="//reddit.com/submit?url=https%3a%2f%2fsohlich.github.io%2fpost%2fjackson%2f&title=Streaming%20JSON%20with%20Jackson" target="_blank" class="share-btn reddit">
+    <i class="fa fa-reddit-alien"></i>
+    <p>Reddit</p>
+</a></li>
+
+
+<li><a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fsohlich.github.io%2fpost%2fjackson%2f&title=Streaming%20JSON%20with%20Jackson" target="_blank" class="share-btn linkedin">
+    <i class="fa fa-linkedin"></i>
+    <p>LinkedIn</p>
+</a></li>
+
+
+<li><a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fsohlich.github.io%2fpost%2fjackson%2f&title=Streaming%20JSON%20with%20Jackson" target="_blank" class="share-btn stumbleupon">
+    <i class="fa fa-stumbleupon"></i>
+    <p>StumbleUpon</p>
+</a></li>
+
+
+<li><a href="mailto:?subject=Check out this post by Radomir%20Sohlich&body=https%3a%2f%2fsohlich.github.io%2fpost%2fjackson%2f" target="_blank" class="share-btn email">
+    <i class="fa fa-envelope"></i>
+    <p>Email</p>
+</a></li>
+
+        </ul>
+    </section>
+</section>
+
+    
+    <div id="main">
+        
+        
+        <article class="post">
+    <header>
+    <div class="title">
+        
+            <h1><a href="https://sohlich.github.io/post/jackson/">Streaming JSON with Jackson</a></h1>
+            
+        
+        
+    </div>
+    <div class="meta">
+        
+            
+        
+
+        <time class="published"
+            datetime='2017-02-08'>
+            February 8, 2017</time>
+        <span class="author">Radomir Sohlich</span>
+        
+        
+    </div>
+</header>
+
+
+    <section id="social-share">
+        <ul class="icons">
+            
+
+
+<li><a href="//twitter.com/share?url=https%3a%2f%2fsohlich.github.io%2fpost%2fjackson%2f&text=Streaming%20JSON%20with%20Jackson&via=radeksohlich" target="_blank" class="share-btn twitter">
+    <i class="fa fa-twitter"></i>
+    <p>Twitter</p>
+</a></li>
+
+
+<li><a href="//plus.google.com/share?url=https%3a%2f%2fsohlich.github.io%2fpost%2fjackson%2f" target="_blank" class="share-btn google-plus">
+    <i class="fa fa-google-plus"></i>
+    <p>Google+</p>
+</a></li>
+
+
+<li><a href="//www.facebook.com/sharer/sharer.php?u=https%3a%2f%2fsohlich.github.io%2fpost%2fjackson%2f" target="_blank" class="share-btn facebook">
+    <i class="fa fa-facebook"></i>
+    <p>Facebook</p>
+</a></li>
+
+
+<li><a href="//reddit.com/submit?url=https%3a%2f%2fsohlich.github.io%2fpost%2fjackson%2f&title=Streaming%20JSON%20with%20Jackson" target="_blank" class="share-btn reddit">
+    <i class="fa fa-reddit-alien"></i>
+    <p>Reddit</p>
+</a></li>
+
+
+<li><a href="//www.linkedin.com/shareArticle?url=https%3a%2f%2fsohlich.github.io%2fpost%2fjackson%2f&title=Streaming%20JSON%20with%20Jackson" target="_blank" class="share-btn linkedin">
+    <i class="fa fa-linkedin"></i>
+    <p>LinkedIn</p>
+</a></li>
+
+
+<li><a href="//www.stumbleupon.com/submit?url=https%3a%2f%2fsohlich.github.io%2fpost%2fjackson%2f&title=Streaming%20JSON%20with%20Jackson" target="_blank" class="share-btn stumbleupon">
+    <i class="fa fa-stumbleupon"></i>
+    <p>StumbleUpon</p>
+</a></li>
+
+
+<li><a href="mailto:?subject=Check out this post by Radomir%20Sohlich&body=https%3a%2f%2fsohlich.github.io%2fpost%2fjackson%2f" target="_blank" class="share-btn email">
+    <i class="fa fa-envelope"></i>
+    <p>Email</p>
+</a></li>
+
+        </ul>
+    </section>
+    
+
+    <div id="content">
+        <p>Sometimes there is a situation, when it is more
+efficient to parse the JSON in stream way.
+Especially if you are dealing with huge input
+or slow connection. In that case the JSON need to be read
+as it comes from input part by part.
+The side effect of such approach is that you are able to
+read corrupted JSON arrays in some kind of comfortable way.</p>
+
+<p>Well known Jackson library (<a href="https://github.com/FasterXML/jackson-core">https://github.com/FasterXML/jackson-core</a>)
+provides so called stream API to handle it.
+The parsing of stream is possible via
+JsonParser object, which uses token approach.</p>
+
+<pre><code>InputStream is = new FileInputStream(&quot;data.json&quot;);
+JsonFactory factory = new JsonFactory();
+JsonParser parser = factory.createJsonParser(is);
+</code></pre>
+
+<p>To simplify the approach, the combination of ObjectMapper
+with sequetial reading of JSON data could be used.The code of the
+complete solution could be like:</p>
+
+<pre><code>public void tryParse(InputStream is) throws IOException {
+		JsonFactory factory = new JsonFactory();
+		JsonParser parser = factory.createJsonParser(is);
+		ObjectMapper mapper = new ObjectMapper()
+				.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES,false);
+
+		JsonToken token = parser.nextToken();
+		
+        	// Try find at least one object or array.
+		while (!JsonToken.START_ARRAY.equals(token) &amp;&amp; token != null &amp;&amp; !JsonToken.START_OBJECT.equals(token)) {
+			parser.nextToken();
+		}
+
+		// No content found
+		if (token == null) {
+			return;
+		}
+
+		boolean scanMore = false;
+
+		while (true) {
+			// If the first token is the start of obejct -&gt;
+			// the response contains only one object (no array)
+			// do not try to get the first object from array.
+			try {
+				if (!JsonToken.START_OBJECT.equals(token) || scanMore) {
+					token = parser.nextToken();
+				}
+				if (!JsonToken.START_OBJECT.equals(token)) {
+					break;
+				}
+				if (token == null) {
+					break;
+				}
+
+				Object node = mapper.readValue(parser, mappedClass);
+				
+				//YOUR CODE TO HANDLE OBJECT
+				//...
+
+
+				scanMore = true;
+			} catch (JsonParseException e) {
+				handleParseException(e);
+				break;
+			}
+		}
+	}
+</code></pre>
+
+    </div>
+
+    <footer>
+        <ul class="stats">
+    
+        
+
+        
+        
+            <li>
+                
+                
+                    
+
+                    
+                        Category
+                    
+                
+            </li>
+        
+    
+
+    
+    
+        <li><a href='https://sohlich.github.io/categories/java'>java</a></li>
+    
+</ul>
+
+    </footer>
+</article>
+<ul class="actions pagination">
+    
+        <li><a href="https://sohlich.github.io/post/natsproxy/"
+                class="button big previous">Nats Proxy Framework</a></li>
+    
+
+    
+</ul>
+
+
+
+
+    </div>
+    
+<section id="sidebar">
+
+    
+        <section id="intro">
+            
+            
+                
+                    <a href="https://sohlich.github.io/" class="logo"><img src="https://sohlich.github.io/img/avatar.jpeg" alt="Radomir Sohlich" /></a>
+                
+            
+            
+                <header>
+                    <h2>Radomir Sohlich</h2>
+                    <p>Golang and open-source enthusiast, Java software engineer <a href="http://www.edhouse.cz/en/" >@Edhouse</ a>.</p>
+                </header>
+            
+            <ul class="icons">
+                
+                
+                    
+<li><a href="//github.com/sohlich" target="_blank" title="GitHub" class="fa fa-github"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//linkedin.com/in/sohlich" target="_blank" title="LinkedIn" class="fa fa-linkedin"></a></li>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<li><a href="//twitter.com/radeksohlich" target="_blank" title="Twitter" class="fa fa-twitter"></a></li>
+
+
+
+
+                
+            </ul>
+        </section>
+
+    
+        
+
+    
+    
+    
+    
+        
+    
+
+    
+        
+
+    
+        <section id="footer">
+            
+
+            <p class="copyright">&copy; Radek Sohlich. Powered by <a href="//gohugo.io" target="_blank">Hugo</a></p>
+        </section>
+
+</section>
+
+            </div>
+        <a id="back-to-top" href="#" class="fa fa-arrow-up fa-border fa-2x"></a>
+        
+
+        
+        
+            
+        
+
+        
+        
+            <script src="https://sohlich.github.io/js/jquery.min.js"></script>
+            <script src="https://sohlich.github.io/js/skel.min.js"></script>
+            <script src="https://sohlich.github.io/js/util.js"></script>
+            <script src="https://sohlich.github.io/js/main.js"></script>
+            <script src="https://sohlich.github.io/js/backToTop.js"></script>
+            <script src="https://sohlich.github.io/js/highlight.pack.js"></script>
+        
+
+        
+
+            
+            <script>hljs.initHighlightingOnLoad();</script>
+            
+    </body>
+</html>
+

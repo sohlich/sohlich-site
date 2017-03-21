@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Radek Sohlich</title>
+    <link>https://sohlich.github.io/categories/golang/index.xml</link>
+    <description>Recent content on Radek Sohlich</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Copyright (c) 2016, Radomir Sohlich; all rights reserved.</copyright>
+    <atom:link href="https://sohlich.github.io/categories/golang/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Nats Proxy Framework</title>
+      <link>https://sohlich.github.io/post/natsproxy/</link>
+      <pubDate>Sun, 28 Aug 2016 08:48:41 +0200</pubDate>
+      
+      <guid>https://sohlich.github.io/post/natsproxy/</guid>
+      <description>
+
+&lt;p&gt;The REST to NATS proxy project &lt;a href=&#34;http://gopkg.in/sohlich/nats-proxy.v1&#34;&gt;sohlich/nats-proxy&lt;/a&gt; is the micro framework that provides a bridge between HTTP and NATS. To introduce the problem, we first compare the HTTP and NATS communication models. The table below represents the matching of HTTP and NATS concepts and what do they provide.&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;HTTP&lt;/th&gt;
+&lt;th&gt;NATS&lt;/th&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Request/Response&lt;/td&gt;
+&lt;td&gt;Request/Reply&lt;/td&gt;
+&lt;td&gt;synchronous communication&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td&gt;Websocket&lt;/td&gt;
+&lt;td&gt;Publish/Subscribe&lt;/td&gt;
+&lt;td&gt;real-time asynchronous communication&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;As you can see, the NATS provides both synchronous and asynchronous communication between clients. The synchronous communication, represented by simple Request and Response of HTTP protocol, could be matched with the Request/Reply communication model of NATS. As the documentation for &lt;a href=&#34;http://nats.io/documentation/concepts/nats-req-rep/&#34;&gt;&amp;ldquo;request reply&amp;rdquo; &lt;/a&gt; model describes: each request sent via NATS contains reply subject, to which the reply is sent. The asynchronous, let&amp;rsquo;s say real-time communication, can be represented by Websockets on HTTP side.The truth is that it is not really related to HTTP, but if we simplify it, at least the handshake is based on HTTP. For this purpose, the Publish/Subscribe model could be used.&lt;/p&gt;
+
+&lt;p&gt;So the REST to NATS project uses this similarity between NATS and HTTP communication and tries to implement the bridge between HTTP(Websockets) and NATS in such way. The library was originally created for the purpose of migrating REST based architecture like this&lt;/p&gt;
+
+&lt;p&gt;&lt;img class=&#34;img-responsive center-block&#34; src=&#34;https://sohlich.github.io/img/blog/natsproxy/natsproxy_rest.png&#34;&gt;&lt;/p&gt;
+
+&lt;p&gt;into NATS messaging platform based one. But as it evolved, it started to grow into some kind of framework, that can be used for the creation of service API and seamless protocol bridging. So one of the many examples of how the system using a nats-proxy framework could look like is on the architecture below.&lt;/p&gt;
+
+&lt;p&gt;&lt;img class=&#34;img-responsive center-block&#34; src=&#34;https://sohlich.github.io/img/blog/natsproxy/natsproxy_arch.png&#34;&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;proxy-basics&#34;&gt;Proxy basics&lt;/h2&gt;
+
+&lt;p&gt;As the name of the project suggests the function of the library is very similar to basic HTTP proxy. The proxy receives the HTTP request and translates it into a struct, which contains all the information from original request (URL, header, body).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type Request struct {
+	URL        string
+	Method     string
+	Header     http.Header
+	Form       url.Values
+	RemoteAddr string
+	Body       []byte
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This struct is serialized and sent as a message through NATS via request (see &lt;a href=&#34;http://nats.io/documentation/concepts/nats-req-rep/&#34;&gt;http://nats.io/documentation/concepts/nats-req-rep/&lt;/a&gt;) to ensure synchronous processing.
+The subject, to which the serialized struct is sent, is constructed from the HTTP request URL and METHOD by a very simple rule: slashes in the path are replaced by dots and the method is used as the prefix.&lt;/p&gt;
+
+&lt;p&gt;&lt;img class=&#34;img-responsive center-block&#34; src=&#34;https://sohlich.github.io/img/blog/natsproxy/natsproxy_request.png&#34;&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Lets say we have GET request on URL &lt;code&gt;http://example.com/user/info&lt;/code&gt; so the proxy will translate this URL to  subject &lt;code&gt;GET:user.info&lt;/code&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The client side is subscribed to the subject &lt;code&gt;GET:user.info&lt;/code&gt;. Because of that, it receives the request and writes back the response to the reply subject. The response struct also contains the body, status and header.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type Response struct {
+	Header     http.Header
+	StatusCode int
+	Body       []byte
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For better picture of how it works in reality. There is a code of simple client and proxy.&lt;/p&gt;
+
+&lt;h2 id=&#34;proxy&#34;&gt;Proxy&lt;/h2&gt;
+
+&lt;p&gt;The proxy side implements the &lt;code&gt;http.Handler&lt;/code&gt; interface, so it can be used with built-in &lt;code&gt;http&lt;/code&gt; package as you can see in the code below. The handler does nothing special. It parses the request and translates it to custom representation which is then serialized to JSON by built in &lt;code&gt;json&lt;/code&gt; package encoder.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;import(
+        &amp;quot;gopkg.in/sohlich/nats-proxy.v1&amp;quot;
+        &amp;quot;net/http&amp;quot;
+        &amp;quot;github.com/nats-io/nats&amp;quot;
+    )
+
+func main() {
+	proxyConn, _ := nats.Connect(nats.DefaultURL)
+	proxy, _ := natsproxy.NewNatsProxy(proxyConn)
+	defer proxyConn.Close()
+	http.ListenAndServe(&amp;quot;:8080&amp;quot;, proxy)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The proxy itself does not implement any mechanisms to apply filters before the request is passed to the proxy handler as this could be implemented by decorating the proxy handler or other similar techniques.
+Because the implementation does not allow writing data to the &lt;code&gt;http.ResponseWriter&lt;/code&gt; after the handler is applied, the proxy provides &lt;code&gt;natsproxy.Hook&lt;/code&gt; interface. This hook is applied on the response before it is written to &lt;code&gt;http.ResponseWriter&lt;/code&gt;. The example bellow shows the usage of hook to translate JWT token with all user info to meaningless reference token.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;proxyHandler.AddHook(&amp;quot;.*&amp;quot;, func(r *Response) {
+        // Exchange the jwt token for
+        // reference token to hide user information
+        jwt := r.GetHeader().Get(&amp;quot;X-Auth&amp;quot;)
+        refToken := auth.GetTokenFor(jwt)
+		r.GetHeader().Set(&amp;quot;X-Auth&amp;quot;, refToken)
+	})
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;client&#34;&gt;Client&lt;/h2&gt;
+
+&lt;p&gt;The client code uses the nats connection as the constructor argument, so all available options for configuring the connection are accessible. The client itself uses the asynchronous subscription to handle incoming messages, so it&amp;rsquo;s behavior similar to &lt;code&gt;http.HandlerFunc&lt;/code&gt;. The client API and internals are heavily inspired by &lt;a href=&#34;https://gin-gonic.github.io/gin/&#34;&gt;Gin Gonic&lt;/a&gt; project. The sample code shows how to use the client API.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;
+import(
+    &amp;quot;gopkg.in/sohlich/nats-proxy.v1&amp;quot;
+    &amp;quot;net/http&amp;quot;
+    &amp;quot;github.com/nats-io/nats&amp;quot;
+)
+
+func main(){
+	clientConn, _ := nats.Connect(nats.DefaultURL)
+	natsClient, _ := natsproxy.NewNatsClient(clientConn)
+	//Subscribe to URL /user/info
+	natsClient.GET(&amp;quot;/user/info&amp;quot;, func(c *natsproxy.Context) {
+	   user := struct {
+		    Name string
+	    }{
+		    &amp;quot;Alan&amp;quot;,
+	    }
+		c.JSON(200, user)
+	})
+	defer clientConn.Close()
+
+	// Waiting for signal to close the client
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM)
+	fmt.Println(&amp;quot;Press Ctrl+C for exit.&amp;quot;)
+	&amp;lt;-sig
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The client API naturally provides the subscription for other HTTP methods and generic subscription method. The request handler which implements &lt;code&gt;natsproxy.NatsHandler&lt;/code&gt; interface uses &lt;code&gt;natsproxy.Context&lt;/code&gt; struct which encapsulates both Request and Response and provides some useful methods to access request data and to write a response.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;//GET
+natsClient.GET(&amp;quot;/user/info&amp;quot;, func(c *natsproxy.Context) {
+		c.JSON(200, &amp;quot;Hello&amp;quot;)
+	})
+
+//POST
+natsClient.POST(&amp;quot;/user/info&amp;quot;, func(c *natsproxy.Context) {
+		c.JSON(200, &amp;quot;Hello&amp;quot;)
+	})
+
+//PUT
+natsClient.PUT(&amp;quot;/user/info&amp;quot;, func(c *natsproxy.Context) {
+		c.JSON(200, &amp;quot;Hello&amp;quot;)
+	})
+
+//DELETE
+natsClient.DELETE(&amp;quot;/user/info&amp;quot;, func(c *natsproxy.Context) {
+		c.JSON(200, &amp;quot;Hello&amp;quot;)
+	})
+
+//General method
+natsClient.Subscribe(&amp;quot;HEAD&amp;quot;,&amp;quot;/user/info&amp;quot;, func(c *natsproxy.Context) {
+		c.JSON(200, &amp;quot;Hello&amp;quot;)
+	})
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The client also implements middleware function that provides the means of accessing the request before it is handled by the specific handler. The reason behind this feature is to provide options for security checks, logging, etc. The example shows the implementation of middleware, that logs all incoming requests.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;natsClient.Use(func logger(c *natsproxy.Context) {
+    log.Infof(&amp;quot;%s:%s from %s&amp;quot;, c.Request.Method, c.Request.URL)
+})
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;summary&#34;&gt;Summary&lt;/h2&gt;
+
+&lt;p&gt;The first version (v1) of the nats-proxy framework implements only HTTP Request/Response proxying.
+Because it started as some kind of proof of concept, the solution is not really optimized, all the work is done on the proxy side.
+Also, the serialization of structs is done by JSON encoder, which does not provide very fast serialization.
+However for the purpose of bridging REST(HTTP) requests to NATS messaging platform, it&amp;rsquo;s enough to make it possible.&lt;/p&gt;
+
+&lt;p&gt;Currently, the next version (v2) is under development.
+The v2 should bring some performance improvements because the serialization is done via protocol buffers. Also, a lot of work originally done on the proxy side was moved to client(service) side.The next significant feature is the WebSocket support.&lt;/p&gt;
+
+&lt;p&gt;If you are interested or have some ideas, see &lt;a href=&#34;https://github.com/sohlich/nats-proxy&#34;&gt;REST to NATS proxy&lt;/a&gt; project.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
