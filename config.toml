@@ -1,47 +1,18 @@
 baseurl = "https://sohlich.github.io/"
-languageCode = "en-us"
 publishdir = "public"
 title = "Radek Sohlich"
-theme = "hugo-future-imperfect"
+theme = "robust"
 canonifyurls = true
 
+googleAnalytics = "UA-102800896-1" # Optional
+disqusShortname = "Radek Sohlich Blog"
+
 [params]
+  #dateformat = "Feb 2, 2017" # Optional
+  # Fonts settings.
+  googlefonts = "https://fonts.googleapis.com/css?family=Lobster|Lato:400,700" # Optional, Include google fonts.
+  fontfamily = "Lato,YuGothic,'Hiragino Kaku Gothic Pro',Meiryo,sans-serif" # Optional, Override body font family.
+  logofontfamily = "Lobster, cursive" # Optional, Override logo font.
 
-    # Sets the meta tag description, usually reserved for the main page
-    description          = "My personal blog, projects and ideas."
-    # This will appear on the top left of the navigation bar
-    navbarTitle          = "Radomír Sohlich"
-    # Social media buttons that appear on the sidebar
-    socialAppearAtTop    = true
-    categoriesByCount    = false
-
-    copyright = "Copyright (c) 2016, Radomir Sohlich; all rights reserved."
-    viewMorePostLink     = "/post/"
-
-[params.recent_posts]
-    enable = false
-
-[params.intro]
-    header    = "Radomir Sohlich"
-    paragraph = "Golang and open-source enthusiast, Java software engineer <a href=\"http://www.edhouse.cz/en/\" >@Edhouse</ a>."
-
-
-[params.intro.pic]
-    src       = "/img/avatar.jpeg"
-    # modify your picture in the shape of a circle or
-    # future imperfect's hexagonal shape
-    circle    = false
-    imperfect = true
-    width     = ""
-    alt       = "Radomir Sohlich"
-
-[[menu.main]]
-    name = "Blog"
-    url = "/post"
-    identifier = "fa fa-newspaper-o"
-    weight = 1
-
-[social]
-    github = "sohlich"
-    twitter = "radeksohlich"
-    linkedin = "sohlich"
+[outputs]
+page = [ "HTML", "AMP"] # if you want AMP enable.

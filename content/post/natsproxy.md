@@ -4,7 +4,7 @@ draft = false
 categories = [ "golang"
 ]
 title = "Nats Proxy Framework"
-banner="/img/blog/natsproxy/natsproxy_rest.png"
+thumbnail="/img/blog/natsproxy/back.jpg"
 +++
 
 The REST to NATS proxy project [sohlich/nats-proxy](http://gopkg.in/sohlich/nats-proxy.v1) is the micro framework that provides a bridge between HTTP and NATS. To introduce the problem, we first compare the HTTP and NATS communication models. The table below represents the matching of HTTP and NATS concepts and what do they provide.

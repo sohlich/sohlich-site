@@ -7,8 +7,7 @@ title = "Streaming JSON with Jackson"
 author = "Radomir Sohlich"
 categories = [ "java"
 ]
-description = ""
-featuredalt = ""
+thumbnail="/img/blog/jackson/back.jpg"
 
 +++
 

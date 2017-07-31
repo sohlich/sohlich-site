@@ -5,8 +5,6 @@
     <link>https://sohlich.github.io/index.xml</link>
     <description>Recent content on Radek Sohlich</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <copyright>Copyright (c) 2016, Radomir Sohlich; all rights reserved.</copyright>
     <lastBuildDate>Wed, 08 Feb 2017 20:27:44 +0100</lastBuildDate>
     <atom:link href="https://sohlich.github.io/index.xml" rel="self" type="application/rss+xml" />
     
@@ -287,6 +285,15 @@ The v2 should bring some performance improvements because the serialization is d
       <pubDate>Sat, 28 May 2016 06:01:07 +0200</pubDate>
       
       <guid>https://sohlich.github.io/about/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://sohlich.github.io/post/angular_electron/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://sohlich.github.io/post/angular_electron/</guid>
       <description></description>
     </item>
     

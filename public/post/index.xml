@@ -5,8 +5,6 @@
     <link>https://sohlich.github.io/post/index.xml</link>
     <description>Recent content in Post-rsses on Radek Sohlich</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <copyright>Copyright (c) 2016, Radomir Sohlich; all rights reserved.</copyright>
     <lastBuildDate>Wed, 08 Feb 2017 20:27:44 +0100</lastBuildDate>
     <atom:link href="https://sohlich.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     
@@ -279,6 +277,15 @@ The v2 should bring some performance improvements because the serialization is d
 
 &lt;p&gt;If you are interested or have some ideas, see &lt;a href=&#34;https://github.com/sohlich/nats-proxy&#34;&gt;REST to NATS proxy&lt;/a&gt; project.&lt;/p&gt;
 </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://sohlich.github.io/post/angular_electron/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://sohlich.github.io/post/angular_electron/</guid>
+      <description></description>
     </item>
     
   </channel>
