@@ -4,6 +4,7 @@ draft = false
 categories = [ "golang"
 ]
 title = "Nats Proxy Framework"
+tags = ["NATS","messaging","architecture","microservices","REST"]
 thumbnail="/img/blog/natsproxy/back.jpg"
 +++
 

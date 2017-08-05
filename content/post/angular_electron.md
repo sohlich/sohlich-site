@@ -3,12 +3,12 @@ date = "2017-07-29T08:48:41+02:00"
 draft = true
 categories = [ "golang"
 ]
-title = "Nats Proxy Framework"
-thumbnail="/img/blog/electron/natsproxy_rest.png"
+tags=["angular","javascript","electron","desktop"]
+title = "Angular + Electron = Fun"
+thumbnail="/img/blog/electron/back.jpg"
 +++
 
-# Angular + Electron = Desktop fun again
-The desktop applications are some kind of old habit that I’m used to from back time. Today you are able to fullfill almost all your needs by the cloud services and online applications. But for me it is still more comfortable to have a dedicated application, than to have it in a tab of the browser.
+The desktop applications are some kind of old habit that I’m used to using back in time. Today you are able to fulfill almost all your needs by the cloud services and online applications. But for me, it is still more comfortable to have a dedicated application than to have it in a tab of the browser.
 
 If I look to the problem as a developer of web applications, and more concrete java developer. It is painful to create application desktop application with the GUI focused libraries of java. 
 
@@ -48,7 +48,7 @@ ${PROJECT_FOLDER}/main.js:
         });
     });
     
-    // Defines the behaviour on close.
+    // Defines the behavior on close.
     app.on('window-all-closed', function() {
         app.quit();
     });
@@ -110,24 +110,38 @@ ${PROJECT_FOLDER}/package.json:
     }
 ```
 
-I recommend to install the electron platform globally by
+I recommend to install the electron platform globaly with command:
 
 ```
     > npm install -g electron
 ```
 
-The first simple manual run could be done by calling following commands (these must be run in separate terminal as the “ng serve” is blocking )
+The first simple manual run could be done by calling following commands (these must be run in separate terminal windows as the “ng serve” is blocking)
 
 ```
     > ng serve
     > electron .
 ```
 
-Command “ng server” will start development server on http://localhost:4200, you can notice the this url is used in main.js file. 
+Command “ng serve” will start development server on http://localhost:4200, you can notice the this url is used in main.js file. The "electron ." will start the electron app by executing the main.js file.
+
+## Developer's Note
+ You can use [concurrently](https://www.npmjs.com/package/concurrently) tool to run these two commands concurrently. Also it can be incorporated to package.json file as an npm script.
+```
+npm install -g concurrently
+```
+${PROJECT_FOLDER}/package.json
+```
+"scripts": {
+        ...
+        "electrondev": "concurrently -k \"ng serve\" \"electron .\""
+    },
+```
+
 
 # Serving static files
 
-Serving angular application via development server is a development friendly solution. Better solution is to serve a static files from the distribution folder. The main.js file need to be changed to open the index.html file.
+Serving angular application via development server is not very comfortable and permanent solution. Better approach is serving a static files from the build output folder (let's call it distribution folder). The main.js file need to be changed to open the index.html file located in distribution folder of your angular application.
 
 ${PROJECT_FOLDER}/main.js
 ```
@@ -153,12 +167,12 @@ ${PROJECT_FOLDER}/main.js
         app.quit();
     });
 ```
-This might work, but after you open electron you will receive “Failed to load resource” error.
-
+After you open electron you will receive “Failed to load resource” error.
+There is one step missing to get the change work. 
 <img src ="https://d2mxuefqeaa7sj.cloudfront.net/s_F68920300BC018EB3E1E88614B689BAD376E939D730AA4BF30888F46A4DF2F8A_1501387336733_image.png"/>
 
 
-So there is one small change that need to be done in your index.html file. We need to define the base for the file as absolute but from the actual working directory like “./”. This is done in <base> element in head tag of index.html . After the modification you can try “electron .” in your ${PROJECT_FOLDER}
+The one small change that need to be done is in your index.html file. We need to define the base for the file as absolute but from the actual working directory like “./”. This is done in <base> element in head tag of index.html . After the modification you can try “electron .” in your ${PROJECT_FOLDER}
 
 ${PROJECT_FOLDER}/index.html :
 
@@ -177,3 +191,4 @@ ${PROJECT_FOLDER}/index.html :
     </body>
     </html>
 ```
+That's it. Desktop application with Angular. The same approach could be used with other JS frameworks or just pure static HTML. I was very excited about that, how about you?
