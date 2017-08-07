@@ -1,11 +1,12 @@
 baseurl = "https://sohlich.github.io/"
 publishdir = "public"
-title = "Radek Sohlich"
+title = "Radomir Sohlich"
 theme = "robust"
 canonifyurls = true
 
 googleAnalytics = "UA-102800896-1" # Optional
 disqusShortname = "Radek Sohlich Blog"
+copyright = "© 2017 Radomir Sohlich"
 
 [params]
   #dateformat = "Feb 2, 2017" # Optional

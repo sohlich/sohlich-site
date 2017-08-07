@@ -1,22 +1,20 @@
 +++
 date = "2017-07-29T08:48:41+02:00"
-draft = true
+draft = false
 categories = [ "golang"
 ]
 tags=["angular","javascript","electron","desktop"]
-title = "Angular + Electron = Fun"
+title = "Angular on Electron, part 1"
 thumbnail="/img/blog/electron/back.jpg"
 +++
 
-The desktop applications are some kind of old habit that I’m used to using back in time. Today you are able to fulfill almost all your needs by the cloud services and online applications. But for me, it is still more comfortable to have a dedicated application than to have it in a tab of the browser.
+Today it is possible to have almost all the applications as a service online. Literally you don't have to install any of it on you computer. Even if this is possible, but for me it is still more comfortable to have a dedicated desktop application. I believe I'm not the only one. There are a lot of ways how to create a desktop application. Utilizing the native frameworks like Qt, WxWidgets is always an option. For Java people, there are two useful options: swing and java fx. 
+But for me as web developer, though java based, it means to learn a new library or whole framework, all its features and pitfalls... But what If anybody tells you that you can use your good "old" javascript and HTML? Me, I’m totally IN.
 
-If I look to the problem as a developer of web applications, and more concrete java developer. It is painful to create application desktop application with the GUI focused libraries of java. 
+So here comes the Electron platform (https://electron.atom.io/) based on Chromium browser. It provides presentation layer and runtime for your application.
+The Electron accompanied by Angular framework is a very solid foundation for desktop application development in most of use cases. By the way lot of well known applications are based on electron: VS Code, Slack, WhatsApp...
 
-So if I can choose to create such app as a web application with use of basic html and javascript/typescript, I’m totally in.
-
-Here comes the Electron platform (https://electron.atom.io/) based on chromium browser it provides presentation and runtime for your application.
-The Electron platform accompanied by Angular framework is a very solid foundation for desktop application development.
-
+I'll try to show you how to start your own project, or "Electronify" the existing one.
 
 # Bootstrap your project
 
@@ -125,7 +123,6 @@ The first simple manual run could be done by calling following commands (these m
 
 Command “ng serve” will start development server on http://localhost:4200, you can notice the this url is used in main.js file. The "electron ." will start the electron app by executing the main.js file.
 
-## Developer's Note
  You can use [concurrently](https://www.npmjs.com/package/concurrently) tool to run these two commands concurrently. Also it can be incorporated to package.json file as an npm script.
 ```
 npm install -g concurrently
@@ -151,7 +148,12 @@ ${PROJECT_FOLDER}/main.js
     app.on('ready', function() {
         console.log('Starting application!');
         mainWindow = new BrowserWindow({ width: 1280, height: 960 });
+        
+        // Change loadUrl to load index.html
+        // using url and path package 
+        // to format the file url
         mainWindow.loadURL(url.format({
+            //__dirname is the current working dir
             pathname: path.join(__dirname, 'dist', 'index.html'),
             protocol: 'file:',
             slashes: true
@@ -166,7 +168,7 @@ ${PROJECT_FOLDER}/main.js
     app.on('window-all-closed', function() {
         app.quit();
     });
-```
+``` 
 After you open electron you will receive “Failed to load resource” error.
 There is one step missing to get the change work. 
 <img src ="https://d2mxuefqeaa7sj.cloudfront.net/s_F68920300BC018EB3E1E88614B689BAD376E939D730AA4BF30888F46A4DF2F8A_1501387336733_image.png"/>
@@ -182,6 +184,8 @@ ${PROJECT_FOLDER}/index.html :
     <head>
         <meta charset="utf-8">
         <title>Electron</title>
+        <!-- Change the href attribute 
+        to reference to cur. working dir -->
         <base href="./">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="icon" type="image/x-icon" href="favicon.ico">
@@ -191,4 +195,4 @@ ${PROJECT_FOLDER}/index.html :
     </body>
     </html>
 ```
-That's it. Desktop application with Angular. The same approach could be used with other JS frameworks or just pure static HTML. I was very excited about that, how about you?
+That's it. Desktop application with Angular. The same approach could be used with other JS frameworks or just pure static HTML. I was excited how easy it is.
