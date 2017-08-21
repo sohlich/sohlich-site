@@ -9,11 +9,6 @@ thumbnail = "/img/blog/electron2/back.jpg"
 
 +++
 
-### Series:
-- [Angular on Electron, part 1](/post/angular_electron/)
-- [Angular on Electron, part 2](/post/angular_electron_2/)
-
-# Introduction
 In the previous post the bootstrap of Angular project on Electron platform was described. In this one, the process of application packaging will be presented.
 
 One of the benefits of Electron is that it runs on all major platforms. Each platform has naturally its needs regarding to creating the distribution package. Fortunately, the packaging and all that stuff do not need to be done manually. There are few tools which will help you. But first things first.
@@ -194,4 +189,6 @@ The electron dependency need to be add to project.
     npm install electron --save-dev
 ```
 
-
+### Series:
+- [Angular on Electron, part 1](/post/angular_electron/)
+- [Angular on Electron, part 2](/post/angular_electron_2/)
