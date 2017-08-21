@@ -1,13 +1,18 @@
 +++
 date = "2017-07-29T08:48:41+02:00"
 draft = false
-categories = [ "golang"
+categories = [ "angular"
 ]
 tags=["angular","javascript","electron","desktop"]
 title = "Angular on Electron, part 1"
 thumbnail="/img/blog/electron/back.jpg"
 +++
 
+### Series:
+- [Angular on Electron, part 1](/post/angular_electron/)
+- [Angular on Electron, part 2](/post/angular_electron_2/)
+
+# Introduction
 Today it is possible to have almost all the applications as a service online. Literally you don't have to install any of it on you computer. Even if this is possible, but for me it is still more comfortable to have a dedicated desktop application. I believe I'm not the only one. There are a lot of ways how to create a desktop application. Utilizing the native frameworks like Qt, WxWidgets is always an option. For Java people, there are two useful options: swing and java fx. 
 But for me as web developer, though java based, it means to learn a new library or whole framework, all its features and pitfalls... But what If anybody tells you that you can use your good "old" javascript and HTML? Me, I’m totally IN.
 
