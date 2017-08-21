@@ -197,6 +197,8 @@ ${PROJECT_FOLDER}/index.html :
 ```
 That's it. Desktop application with Angular. The same approach could be used with other JS frameworks or just pure static HTML. I was excited how easy it is.
 
+The repository with example project [https://github.com/sohlich/angular_on_electron](https://github.com/sohlich/angular_on_electron)
+
 ### Series:
 - [Angular on Electron, part 1](/post/angular_electron/)
 - [Angular on Electron, part 2](/post/angular_electron_2/)
