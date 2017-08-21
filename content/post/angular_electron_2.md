@@ -4,7 +4,7 @@ categories = [ "angular"
 ]
 date = "2017-08-20T20:33:51+02:00"
 title = "Angular on Electron, part 2"
-draft = true
+draft = false
 thumbnail = "/img/blog/electron2/back.jpg"
 
 +++

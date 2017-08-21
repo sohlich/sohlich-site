@@ -5,7 +5,7 @@ theme = "robust"
 canonifyurls = true
 
 googleAnalytics = "UA-102800896-1" # Optional
-disqusShortname = "Radek Sohlich Blog"
+disqusShortname = "sohlich"
 copyright = "© 2017 Radomir Sohlich"
 
 [params]
