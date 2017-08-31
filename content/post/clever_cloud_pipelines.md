@@ -1,17 +1,18 @@
 +++
-title = "Deploy to Clever Cloud from Bitbucket Pipelines"
+title = "Deploy to Clever Cloud using Bitbucket Pipelines"
 draft = true
-thumbnail = ""
 tags = [
-]
+"Clever Cloud","Bitbucket","golang","docker","CI/CD"]
 categories = [
+    "cloud"
 ]
 date = "2017-08-31T05:08:10+02:00"
+thumbnail="/img/blog/clever_cloud/back.jpg"
 
 +++
 
-There are a lot of CI tools that are available free for open-source projects. Recently I’ve come across the Bitbucket Pipelines feature. It is the CI/CD tool based on containers bounded to Bitbucket repository.
-In this post, I’d like to walk through the setup of Pipelines to make it deploy the build to Clever Cloud. The Clever Cloud is PaaS provider, which I have been using for about 2 years. They come up with a lot of platforms, but the best one and my favorite is the Docker. With this one, it is possible to deploy any Docker image.
+There are a lot of CI tools that are available on the market. These are usualy free for open-source project. Recently I’ve come across the [Bitbucket Pipelines](https://bitbucket.org/product/features/pipelines) feature that is free also for private ones, with limitation naturally. It is the CI/CD tool bounded to Bitbucket repository, that is based on containers.
+In this post, I’d like to walk through the setup of Pipelines to make it deploy the build to [Clever Cloud](https://www.clever-cloud.com). The Clever Cloud is PaaS provider, which I have been using for about 2 years. They come up with a lot of platforms, but the best one and my favorite is the Docker. With this one, it is possible to deploy any Docker image.
 For this post, I’ve chosen the Go application to be deployed on top of the Docker platform, but the same approach could be used with other languages.
 
 ## Repository content
@@ -22,10 +23,10 @@ ${PROJECT_FOLDER}/Dockerfile
 ```
     FROM golang:latest
     #copy the binary of app
-    COPY bin bin
+    COPY linux_bin linux_bin
     EXPOSE 8080
     #execute the binary
-    ENTRYPOINT ["./bin"]
+    ENTRYPOINT ["./linux_bin"]
 ```
 
 The important step in Dockerfile is the exposing of port 8080. The Clever Cloud requires this port as a default HTTP port. If the application does not respond on this port, the monitor tool evaluates the application as non-working and the deployment fails.
@@ -33,13 +34,13 @@ The important step in Dockerfile is the exposing of port 8080. The Clever Cloud 
 The binary itself will be built during the Pipelines run. We can test the Dockerfile by building the binary. As we are running the binary within the container, it must be compiled for Linux and amd64 architecture.
 
 ```
-    > GOOS=linux GOARCH=AMD64 go build -o bin -v
+    > GOOS=linux GOARCH=AMD64 go build -o linux_bin -v
     > docker build --rm -t clever_cloud_deploy .
     Sending build context to Docker daemon  42.55MB
     Step 1/4 : FROM golang:alpine
-    Step 2/4 : COPY bin bin
+    Step 2/4 : COPY linux_bin linux_bin
     Step 3/4 : EXPOSE 8080
-    Step 4/4 : CMD ./bin
+    Step 4/4 : CMD ./linux_bin
     Successfully built 692db10e1840
     Successfully tagged clever_cloud_deploy:latest
     > docker run --rm -it clever_cloud_deploy:latest
@@ -61,7 +62,7 @@ ${PROJECT_FOLDER}/bitbucket-pipelines.yml
               - tar -cO --exclude-vcs --exclude=bitbucket-pipelines.yml . | tar -xv -C "${PACKAGE_PATH}"
               - cd "${PACKAGE_PATH}"
               - go get -v
-              - go build -o bin -v
+              - go build -o linux_bin -v
               - go test -v
 
 ```
@@ -77,6 +78,7 @@ To be able to push into the Clever Cloud repository, the SSH public key must be 
 ### Clever Cloud repository and config
 
 Each application in Clever Cloud has so called “deployment URL” defined in information tab in the Clever Cloud console (administration page). The URL is similar to one below.
+
 ```
     git+ssh://git@push-par-clevercloud-customers.services.clever-cloud.com/app_b5a2def7-ed24-4fde-bcf2-5d0525c2d00b.git
 ```
@@ -90,13 +92,11 @@ Before we do that we need to add the push-par-clevercloud-customers.services.cle
 After this is done the steps described above can be added to Pipelines config file.
 
 ${PROJECT_FOLDER}/bitbucket-pipelines.yml (partial)
-
 ```
-    ...
               - git init
               - git config user.name "Pipeline" && git config user.email "pipeline@example.org"
               # Use -f switch to override .gitignore file
-              - git add -f bin 
+              - git add -f linux_bin 
               - git commit -m "init"
 ```
 
@@ -111,7 +111,6 @@ Finally, push all the changes to Clever Cloud repo using the —force switch.
 The complete Pipelines configuration file could look like this.
 
 ${PROJECT_FOLDER}/bitbucket-pipelines.yml
-
 ```
     image: golang:latest
     pipelines:
@@ -127,16 +126,17 @@ ${PROJECT_FOLDER}/bitbucket-pipelines.yml
               - tar -cO --exclude-vcs --exclude=bitbucket-pipelines.yml . | tar -xv -C "${PACKAGE_PATH}"
               - cd "${PACKAGE_PATH}"
               - go get -v
-              - go build -o infopool_linux -v
+              - go build -o linux_bin -v
               - go test -v
               - git init
               # Deployment to clever cloud
               - git config user.name "Pipeline" && git config user.email "pipeline@example.org"
-              - git add -f bin
+              - git add -f linux_bin
               - git commit -m "init"
               - git push git+ssh://git@push-par-clevercloud-customers.services.clever-cloud.com/app_b5a2def7-ed24-4fde-bcf2-5d0525c2d00b.git master --force
 ```
 
 That’s it. After your commit arrive to Bitbucket repository the Pipelines run is started and the build deployed to Clever Cloud. Enjoy!
 
-
+Link to the sample repository:
+https://bitbucket.org/rsohlich/clever_cloud_deploy
