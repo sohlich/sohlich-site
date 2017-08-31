@@ -4,7 +4,7 @@ draft = true
 tags = [
 "Clever Cloud","Bitbucket","golang","docker","CI/CD"]
 categories = [
-    "cloud"
+    "cloud","golang"
 ]
 date = "2017-08-31T05:08:10+02:00"
 thumbnail="/img/blog/clever_cloud/back.jpg"
