@@ -1,6 +1,6 @@
 +++
-title = "Deploy to Clever Cloud using Bitbucket Pipelines"
-draft = true
+title = "Deploy on Clever Cloud using Bitbucket Pipelines"
+draft = false
 tags = [
 "Clever Cloud","Bitbucket","golang","docker","CI/CD"]
 categories = [
@@ -12,7 +12,7 @@ thumbnail="/img/blog/clever_cloud/back.jpg"
 +++
 
 There are a lot of CI tools that are available on the market. These are usualy free for open-source project. Recently I’ve come across the [Bitbucket Pipelines](https://bitbucket.org/product/features/pipelines) feature that is free also for private ones, with limitation naturally. It is the CI/CD tool bounded to Bitbucket repository, that is based on containers.
-In this post, I’d like to walk through the setup of Pipelines to make it deploy the build to [Clever Cloud](https://www.clever-cloud.com). The Clever Cloud is PaaS provider, which I have been using for about 2 years. They come up with a lot of platforms, but the best one and my favorite is the Docker. With this one, it is possible to deploy any Docker image.
+In this post, I’d like to walk through the setup of Pipelines to deploy the build on [Clever Cloud](https://www.clever-cloud.com). The Clever Cloud is PaaS provider, which I have been using for about 2 years. They come up with a lot of platforms, but the best one and my favorite is the Docker. With this one, it is possible to deploy any Docker image.
 For this post, I’ve chosen the Go application to be deployed on top of the Docker platform, but the same approach could be used with other languages.
 
 ## Repository content
@@ -136,7 +136,7 @@ ${PROJECT_FOLDER}/bitbucket-pipelines.yml
               - git push git+ssh://git@push-par-clevercloud-customers.services.clever-cloud.com/app_b5a2def7-ed24-4fde-bcf2-5d0525c2d00b.git master --force
 ```
 
-That’s it. After your commit arrive to Bitbucket repository the Pipelines run is started and the build deployed to Clever Cloud. Enjoy!
+That’s it. After your commit arrive to Bitbucket repository the Pipelines run is started, subsequently the build deployed on Clever Cloud. Enjoy!
 
 Link to the sample repository:
 https://bitbucket.org/rsohlich/clever_cloud_deploy
