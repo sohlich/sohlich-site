@@ -189,7 +189,7 @@ The electron dependency need to be add to project.
     npm install electron --save-dev
 ```
 
-The repository with example project [](https://github.com/sohlich/angular_on_electron)
+The repository with example project [https://github.com/sohlich/angular_on_electron](https://github.com/sohlich/angular_on_electron)
 
 
 
