@@ -1,5 +1,5 @@
 +++
-title = "Deploy on Clever Cloud using Bitbucket Pipelines"
+title = "Deploy on Clever Cloud with Bitbucket Pipelines"
 draft = false
 tags = [
 "Clever Cloud","Bitbucket","golang","docker","CI/CD"]
