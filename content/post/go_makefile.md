@@ -2,16 +2,16 @@
 categories = [
 ]
 date = "2017-09-18T18:32:54+02:00"
-title = "GO: Don’t afraid of makefiles"
+title = "Golang: Don’t afraid of makefiles"
 draft = true
-thumbnail = ""
+thumbnail = "/img/blog/gomakefile/back.jpeg"
 tags = [
     "golang","make","development"
 ]
 
 +++
 
-The golang development provides me the escape from my day job and makes the coding fun again. But even in Go, which has all the awesome tools bundled, the repeated tasks like build and test commands are better to script. The makefile is the way out. There you can keep all your common tasks in one file. Let's go through some useful parts of the makefile. The following listing is complete makefile ready to be used in any golang project.
+I'm using golang for a while. During the development, I was used to repeatedly execute go tools commands. This was a bad habit on which I resign. It is not so painful if you use simple commands without any args. But in case of more complex tasks, naturally, it is going to be a pain. There are few options you can consider as a way out. You can use a bash script to do the work for you. Or better, at least for me, you can write a makefile. The make tool is there for this reason and in the makefile you can keep all your common tasks together. I'm not C/C++ guru to educate how to write the proper one, but in this post I put together the makefile which works for most of the projects. Let's go through the parts of it.
 
 ```
     # Go parameters
