@@ -1,17 +1,18 @@
 +++
-categories = [
-]
 date = "2017-09-18T18:32:54+02:00"
 title = "Golang: Don’t afraid of makefiles"
 draft = true
 thumbnail = "/img/blog/gomakefile/back.jpeg"
+categories = [
+    "golang"
+]
 tags = [
     "golang","make","development"
 ]
 
 +++
 
-I'm using golang for a while. During the development, I was used to repeatedly execute go tools commands. This was a bad habit on which I resign. It is not so painful if you use simple commands without any args. But in case of more complex tasks, naturally, it is going to be a pain. There are few options you can consider as a way out. You can use a bash script to do the work for you. Or better, at least for me, you can write a makefile. The make tool is there for this reason and in the makefile you can keep all your common tasks together. I'm not C/C++ guru to educate how to write the proper one, but in this post I put together the makefile which works for most of the projects. Let's go through the parts of it.
+I'm using Golang for a while. During the development, I was used to repeatedly execute go tools commands. This was a bad habit on which I resign. It is not so painful if you use simple commands without any args. But in case of more complex tasks, naturally, it is going to be a pain. There are few options you can consider as a way out. You can use a bash script to do the work for you. Or better, at least for me, you can write a makefile. The make tool is there for this reason and in the makefile you can keep all your common tasks together. I'm not "make tool guru" to be able to educate how to write the proper one, but in this post, I put together the makefile which works for most of my projects. Let's go through it.
 
 ```
     # Go parameters
@@ -60,7 +61,7 @@ Let’s say I like to keep the idea of the DRY rule. So it is handy to declare c
     BINARY_NAME=mybinary
     BINARY_UNIX=$(BINARY_NAME)_unix
 
-The makefile tasks are defined bellow labels like “<name>:”. These are executed by make tool if the parameter for make is given. If no parameter is provided to make tool, the first task is executed. In this case the “all” task is executed, which consists of “test” and “build” tasks.
+The makefile targets are defined bellow labels like “<name>:”. These are executed by make tool if the parameter for make is given. If no parameter is provided to make tool, the first task is executed. In this case the “all” task is executed.
 
 
     > make run // call specific task
@@ -74,14 +75,14 @@ One of the essential parts of the makefile is the build step. Using the variable
     build:
       $(GOBUILD) -o $(BINARY_NAME) -v // expands to: "go build -o mybinary -v"
 
-Just because a lot of us are just lazy, the “run” task is here. The task builds the binary and executes the application consequently.
+Just because a lot of us are just lazy, the “run” target is here. The target builds the binary and executes the application consequently.
 
 
     run:
             $(GOBUILD) -o $(BINARY_NAME) -v ./...
             ./$(BINARY_NAME)
 
-Naturally, the test command should be the part of the project makefile. I personally always choose the verbose switch to be able to debug and watch the test run better.
+Naturally, the test command should be the part of the project makefile. I personally always choose the verbose mode to be able to debug and watch the test run better.
 
 
     test:
@@ -94,7 +95,7 @@ If the project uses CI/CD or just for consistency, it is good to keep the list o
             $(GOGET) github.com/markbates/goth
             $(GOGET) github.com/markbates/pop
 
-To wrap up this section of usual commands the clean command is accommodated into makefile. The “rm -f” command is added to remove binary with the custom name in $(BINARY_XXX) variable. Typically another clean-up command could be part of this make section.
+To wrap up this section of useful commands, the clean command is accommodated into makefile. The “rm -f” command is added to remove binary with the custom name in $(BINARY_XXX) variable. Typically another clean-up command could be part of this make section.
 
     clean: 
             $(GOCLEAN)
