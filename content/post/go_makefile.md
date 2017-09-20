@@ -12,7 +12,7 @@ tags = [
 
 +++
 
-I'm using Golang for a while. During the development, I was used to repeatedly execute go tools commands. This was a bad habit on which I resign. It is not so painful if you use simple commands without any args. But in case of more complex tasks, naturally, it is going to be a pain. There are few options you can consider as a way out. You can use a bash script to do the work for you. Or better, at least for me, you can write a makefile. The make tool is there for this reason and in the makefile you can keep all your common tasks together. I'm not "make tool guru" to be able to educate how to write the proper one, but in this post, I put together the makefile which works for most of my projects. Let's go through it.
+I'm using Golang for a while. During the development, I was used to repeatedly execute "go build","go test" manually. This was a bad habit on which I resign. It is not so painful if you use simple command without any args. But in case of more complex tasks, naturally, it is going to be a pain. There are few options you can consider as a way out. You can use a bash script to do the work for you. Or better, at least for me, you can write a makefile. The make tool is there for this reason and in the makefile you can keep all your common tasks together. I'm not "make tool guru" to be able to educate how to write the proper one, but in this post, I put together the makefile which works for most of my projects. Let's go through it.
 
 ```
     # Go parameters
